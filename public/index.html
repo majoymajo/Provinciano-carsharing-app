@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarPool - Share Your Ride</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <h1>🚗 CarPool</h1>
+            </div>
+            <ul id="navMenu">
+                <li><a href="#home" onclick="showSection('home')">Home</a></li>
+                <li id="navSearchRides"><a href="#search" onclick="showSection('search')">Find a Ride</a></li>
+                <li id="navPostRide" style="display:none;"><a href="#post" onclick="showSection('post')">Post a Ride</a></li>
+                <li id="navMyRides" style="display:none;"><a href="#my-rides" onclick="showSection('my-rides')">My Rides</a></li>
+                <li id="navMyBookings" style="display:none;"><a href="#my-bookings" onclick="showSection('my-bookings')">My Bookings</a></li>
+                <li id="navLogin"><a href="#login" onclick="showSection('login')">Login</a></li>
+                <li id="navRegister"><a href="#register" onclick="showSection('register')">Register</a></li>
+                <li id="navLogout" style="display:none;"><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h2>Travel Together, Save Together</h2>
+                <p>Find rides or offer your empty seats to fellow travelers. Save money, reduce carbon emissions, and make new friends on the road.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="showSection('search')">Find a Ride</button>
+                    <button class="btn btn-success" onclick="showSection('register')">Get Started</button>
+                </div>
+            </div>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>🔍 Easy Search</h3>
+                    <p>Find rides that match your route and schedule</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📍 Real-time Tracking</h3>
+                    <p>Track your ride in real-time with OpenStreetMap</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔒 Secure & Safe</h3>
+                    <p>Verified users and secure authentication</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 Save Money</h3>
+                    <p>Share costs and reduce travel expenses</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Section -->
+        <section id="login" class="section">
+            <div class="form-container">
+                <h2>Login</h2>
+                <div id="loginError" class="alert alert-error" style="display:none;"></div>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <p class="form-footer">Don't have an account? <a href="#register" onclick="showSection('register')">Register here</a></p>
+            </div>
+        </section>
+
+        <!-- Register Section -->
+        <section id="register" class="section">
+            <div class="form-container">
+                <h2>Register</h2>
+                <div id="registerError" class="alert alert-error" style="display:none;"></div>
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regFirstName">First Name</label>
+                        <input type="text" id="regFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regLastName">Last Name</label>
+                        <input type="text" id="regLastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Phone</label>
+                        <input type="text" id="regPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="regIsDriver">
+                            I want to register as a driver
+                        </label>
+                    </div>
+                    <div id="driverFields" style="display:none;">
+                        <div class="form-group">
+                            <label for="regCarModel">Car Model</label>
+                            <input type="text" id="regCarModel">
+                        </div>
+                        <div class="form-group">
+                            <label for="regCarPlate">License Plate</label>
+                            <input type="text" id="regCarPlate">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Register</button>
+                </form>
+                <p class="form-footer">Already have an account? <a href="#login" onclick="showSection('login')">Login here</a></p>
+            </div>
+        </section>
+
+        <!-- Search Rides Section -->
+        <section id="search" class="section">
+            <div class="card">
+                <h2>Find a Ride</h2>
+                <form id="searchForm" onsubmit="handleSearch(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="searchOrigin">From (City/Address)</label>
+                            <input type="text" id="searchOrigin" placeholder="e.g., New York">
+                        </div>
+                        <div class="form-group">
+                            <label for="searchDestination">To (City/Address)</label>
+                            <input type="text" id="searchDestination" placeholder="e.g., Boston">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="searchDate">Date</label>
+                            <input type="date" id="searchDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="searchSeats">Seats Needed</label>
+                            <input type="number" id="searchSeats" min="1" value="1">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <div id="searchResults" class="ride-list"></div>
+        </section>
+
+        <!-- Post Ride Section -->
+        <section id="post" class="section">
+            <div class="form-container">
+                <h2>Post a Ride</h2>
+                <div id="postError" class="alert alert-error" style="display:none;"></div>
+                <div id="postSuccess" class="alert alert-success" style="display:none;"></div>
+                <form id="postRideForm" onsubmit="handlePostRide(event)">
+                    <div class="form-group">
+                        <label for="postOriginAddress">From (Address)</label>
+                        <input type="text" id="postOriginAddress" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postOriginLat">Origin Latitude</label>
+                            <input type="number" step="any" id="postOriginLat" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postOriginLng">Origin Longitude</label>
+                            <input type="number" step="any" id="postOriginLng" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="postDestAddress">To (Address)</label>
+                        <input type="text" id="postDestAddress" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postDestLat">Destination Latitude</label>
+                            <input type="number" step="any" id="postDestLat" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postDestLng">Destination Longitude</label>
+                            <input type="number" step="any" id="postDestLng" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postDepartureTime">Departure Time</label>
+                            <input type="datetime-local" id="postDepartureTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postSeats">Available Seats</label>
+                            <input type="number" id="postSeats" min="1" max="8" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="postPrice">Price per Seat ($)</label>
+                        <input type="number" step="0.01" id="postPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="postNotes">Additional Notes</label>
+                        <textarea id="postNotes"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Post Ride</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- My Rides Section -->
+        <section id="my-rides" class="section">
+            <div class="card">
+                <h2>My Rides</h2>
+                <div id="myRidesList" class="ride-list"></div>
+            </div>
+        </section>
+
+        <!-- My Bookings Section -->
+        <section id="my-bookings" class="section">
+            <div class="card">
+                <h2>My Bookings</h2>
+                <div id="myBookingsList" class="ride-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 CarPool. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.socket.io/4.6.2/socket.io.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
