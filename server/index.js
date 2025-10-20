@@ -47,7 +47,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Apply rate limiting
-app.use('/api/', limiter);
+app.use('/api', limiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
