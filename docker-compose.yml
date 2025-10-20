@@ -29,7 +29,7 @@ services:
       DB_PASSWORD: postgres
       JWT_SECRET: change_this_in_production
       JWT_EXPIRE: 7d
-      CORS_ORIGIN: "*"
+      CORS_ORIGIN: "http://localhost:3000"
     depends_on:
       - db
     command: sh -c "sleep 5 && node server/index.js"
